@@ -1,0 +1,37 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.2"
+
+    defaultConfig {
+        applicationId "com.google.zxing.client.android"
+        minSdkVersion 19
+        targetSdkVersion 22
+        versionCode 108
+        versionName "4.7.8"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            signingConfig signingConfigs.debug
+            proguardFiles 'proguard-rules.pro'
+        }
+    }
+
+    defaultConfig {
+        multiDexEnabled true
+    }
+
+    compileOptions {
+        coreLibraryDesugaringEnabled true
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+}
+
+dependencies {
+    implementation project(':core')
+}
