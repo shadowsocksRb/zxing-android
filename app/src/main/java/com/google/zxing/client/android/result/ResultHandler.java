@@ -23,7 +23,6 @@ import com.google.zxing.client.android.Intents;
 import com.google.zxing.client.android.LocaleManager;
 import com.google.zxing.client.android.PreferencesActivity;
 import com.google.zxing.client.android.R;
-import com.google.zxing.client.android.book.SearchBookContentsActivity;
 import com.google.zxing.client.result.ParsedResult;
 import com.google.zxing.client.result.ParsedResultType;
 import com.google.zxing.client.result.ResultParser;
@@ -200,7 +199,7 @@ public abstract class ResultHandler {
 
     // Only use the first name in the array, if present.
     Intent intent = new Intent(Intent.ACTION_INSERT_OR_EDIT, ContactsContract.Contacts.CONTENT_URI);
-    intent.setType(ContactsContract.Contacts.CONTENT_ITEM_TYPE);
+    intent.setDataAndType(ContactsContract.Contacts.CONTENT_URI, ContactsContract.Contacts.CONTENT_ITEM_TYPE);
     putExtra(intent, ContactsContract.Intents.Insert.NAME, names != null && names.length > 0 ? names[0] : null);
 
     putExtra(intent, ContactsContract.Intents.Insert.PHONETIC_NAME, pronunciation);
@@ -407,28 +406,21 @@ public abstract class ResultHandler {
   }
 
   final void getDirections(double latitude, double longitude) {
-    launchIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("http://maps.google." +
+    launchIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("https://maps.google." +
         LocaleManager.getCountryTLD(activity) + "/maps?f=d&daddr=" + latitude + ',' + longitude)));
   }
 
   // Uses the mobile-specific version of Product Search, which is formatted for small screens.
   final void openProductSearch(String upc) {
-    Uri uri = Uri.parse("http://www.google." + LocaleManager.getProductSearchCountryTLD(activity) +
+    Uri uri = Uri.parse("https://www.google." + LocaleManager.getProductSearchCountryTLD(activity) +
         "/m/products?q=" + upc + "&source=zxing");
     launchIntent(new Intent(Intent.ACTION_VIEW, uri));
   }
 
   final void openBookSearch(String isbn) {
-    Uri uri = Uri.parse("http://books.google." + LocaleManager.getBookSearchCountryTLD(activity) +
+    Uri uri = Uri.parse("https://books.google." + LocaleManager.getBookSearchCountryTLD(activity) +
         "/books?vid=isbn" + isbn);
     launchIntent(new Intent(Intent.ACTION_VIEW, uri));
-  }
-
-  final void searchBookContents(String isbnOrUrl) {
-    Intent intent = new Intent(Intents.SearchBookContents.ACTION);
-    intent.setClassName(activity, SearchBookContentsActivity.class.getName());
-    putExtra(intent, Intents.SearchBookContents.ISBN, isbnOrUrl);
-    launchIntent(intent);
   }
 
   final void openURL(String url) {

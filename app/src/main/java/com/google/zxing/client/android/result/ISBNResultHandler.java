@@ -32,7 +32,6 @@ public final class ISBNResultHandler extends ResultHandler {
   private static final int[] buttons = {
       R.string.button_product_search,
       R.string.button_book_search,
-      R.string.button_search_book_contents,
       R.string.button_custom_product_search
   };
 
@@ -61,9 +60,6 @@ public final class ISBNResultHandler extends ResultHandler {
         openBookSearch(isbnResult.getISBN());
         break;
       case 2:
-        searchBookContents(isbnResult.getISBN());
-        break;
-      case 3:
         openURL(fillInCustomSearchURL(isbnResult.getISBN()));
         break;
     }

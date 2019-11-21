@@ -67,12 +67,7 @@ public final class WifiResultHandler extends ResultHandler {
         return;
       }
       final Activity activity = getActivity();
-      activity.runOnUiThread(new Runnable() {
-        @Override
-        public void run() {
-          Toast.makeText(activity.getApplicationContext(), R.string.wifi_changing_network, Toast.LENGTH_SHORT).show();
-        }
-      });
+      activity.runOnUiThread(() -> Toast.makeText(activity.getApplicationContext(), R.string.wifi_changing_network, Toast.LENGTH_SHORT).show());
       new WifiConfigManager(wifiManager).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, wifiResult);
       parent.restartPreviewAfterDelay(0L);
     }
@@ -82,7 +77,8 @@ public final class WifiResultHandler extends ResultHandler {
   @Override
   public CharSequence getDisplayContents() {
     WifiParsedResult wifiResult = (WifiParsedResult) getResult();
-    return wifiResult.getSsid() + " (" + wifiResult.getNetworkEncryption() + ')';
+    return wifiResult.getSsid() + " (" + wifiResult.getNetworkEncryption() + ')' +
+            "\n\n" + wifiResult.getPassword();
   }
 
   @Override

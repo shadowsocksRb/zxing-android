@@ -36,6 +36,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -295,20 +296,11 @@ public final class HistoryManager {
     }
   }
 
-  static Uri saveHistory(String history) {
-    File bsRoot = new File(Environment.getExternalStorageDirectory(), "BarcodeScanner");
-    File historyRoot = new File(bsRoot, "History");
-    if (!historyRoot.mkdirs() && !historyRoot.isDirectory()) {
-      Log.w(TAG, "Couldn't make dir " + historyRoot);
-      return null;
-    }
-    File historyFile = new File(historyRoot, "history-" + System.currentTimeMillis() + ".csv");
-    try (OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(historyFile), StandardCharsets.UTF_8)) {
-      out.write(history);
-      return Uri.parse("file://" + historyFile.getAbsolutePath());
+   void saveHistory(FileDescriptor fdObj) {
+    try (OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(fdObj), StandardCharsets.UTF_8)) {
+      out.write(buildHistory().toString());
     } catch (IOException ioe) {
-      Log.w(TAG, "Couldn't access file " + historyFile + " due to " + ioe);
-      return null;
+      Log.w(TAG, "Couldn't access file " + fdObj + " due to " + ioe);
     }
   }
 

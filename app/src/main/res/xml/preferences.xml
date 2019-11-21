@@ -14,6 +14,7 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  -->
+<!--suppress DeprecatedClassUsageInspection -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
   <PreferenceCategory android:title="@string/preferences_scanning_title">
     <CheckBoxPreference
@@ -68,11 +69,6 @@
         android:defaultValue="true"
         android:title="@string/preferences_history_title"
         android:summary="@string/preferences_history_summary"/>
-    <CheckBoxPreference
-        android:key="preferences_supplemental"
-        android:defaultValue="true"
-        android:title="@string/preferences_supplemental_title"
-        android:summary="@string/preferences_supplemental_summary"/>
   </PreferenceCategory>
   <PreferenceCategory android:title="@string/preferences_general_title">
     <ListPreference

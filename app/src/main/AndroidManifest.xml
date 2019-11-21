@@ -15,17 +15,11 @@
  limitations under the License.
  -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.google.zxing.client.android"
-          android:installLocation="auto">
+    package="com.google.zxing.client.android"
+    android:installLocation="auto">
 
   <uses-permission android:name="android.permission.CAMERA"/>
-  <uses-permission android:name="android.permission.INTERNET"/>
   <uses-permission android:name="android.permission.VIBRATE"/>
-  <uses-permission android:name="android.permission.FLASHLIGHT"/>
-  <uses-permission android:name="android.permission.READ_CONTACTS"/>
-  <!-- unavailable in API 23 -->
-  <uses-permission android:name="com.android.browser.permission.READ_HISTORY_BOOKMARKS"/>
-  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
   <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
   <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 
@@ -38,9 +32,10 @@
   <application android:icon="@drawable/launcher_icon"
                android:logo="@drawable/launcher_icon"
                android:label="@string/app_name"
-               android:allowBackup="true">
+               android:allowBackup="true"
+               android:supportsRtl="true">
     <activity android:name=".CaptureActivity"
-              android:screenOrientation="sensorLandscape"
+              android:screenOrientation="fullSensor"
               android:clearTaskOnLaunch="true"
               android:stateNotNeeded="true"
               android:theme="@style/CaptureTheme"
@@ -52,27 +47,6 @@
       <intent-filter>
         <action android:name="com.google.zxing.client.android.SCAN"/>
         <category android:name="android.intent.category.DEFAULT"/>
-      </intent-filter>
-      <!-- Allow web apps to launch Barcode Scanner by linking to http://zxing.appspot.com/scan. -->
-      <intent-filter>
-        <action android:name="android.intent.action.VIEW"/>
-        <category android:name="android.intent.category.DEFAULT"/>
-        <category android:name="android.intent.category.BROWSABLE"/>
-        <data android:scheme="http" android:host="zxing.appspot.com" android:path="/scan"/>
-      </intent-filter>
-      <!-- We also support a Google Product Search URL. -->
-      <intent-filter>
-        <action android:name="android.intent.action.VIEW"/>
-        <category android:name="android.intent.category.DEFAULT"/>
-        <category android:name="android.intent.category.BROWSABLE"/>
-        <data android:scheme="http" android:host="www.google.com" android:path="/m/products/scan"/>
-      </intent-filter>
-      <!-- And the UK version. -->
-      <intent-filter>
-        <action android:name="android.intent.action.VIEW"/>
-        <category android:name="android.intent.category.DEFAULT"/>
-        <category android:name="android.intent.category.BROWSABLE"/>
-        <data android:scheme="http" android:host="www.google.co.uk" android:path="/m/products/scan"/>
       </intent-filter>
       <!-- Support zxing://scan/?... like iPhone app -->
       <intent-filter>
@@ -104,15 +78,6 @@
         <data android:mimeType="text/plain"/>
       </intent-filter>
     </activity>
-    <activity android:name=".book.SearchBookContentsActivity"
-              android:label="@string/sbc_name"
-              android:stateNotNeeded="true"
-              android:screenOrientation="sensorLandscape">
-      <intent-filter>
-        <action android:name="com.google.zxing.client.android.SEARCH_BOOK_CONTENTS"/>
-        <category android:name="android.intent.category.DEFAULT"/>
-      </intent-filter>
-    </activity>
     <activity android:name=".share.ShareActivity"
               android:stateNotNeeded="true"
               android:screenOrientation="user">
@@ -123,16 +88,6 @@
     </activity>
     <activity android:name=".history.HistoryActivity"
               android:label="@string/history_title"
-              android:stateNotNeeded="true"/>
-    <activity android:name=".share.BookmarkPickerActivity"
-              android:label="@string/bookmark_picker_name"
-              android:stateNotNeeded="true"/>
-    <activity android:name=".share.AppPickerActivity"
-              android:label="@string/app_picker_name"
-              android:stateNotNeeded="true"/>
-    <activity android:name=".HelpActivity"
-              android:label="@string/menu_help"
-              android:screenOrientation="user"
               android:stateNotNeeded="true"/>
   </application>
 

@@ -50,7 +50,7 @@ public final class CaptureActivityHandler extends Handler {
   private final CaptureActivity activity;
   private final DecodeThread decodeThread;
   private State state;
-  private final CameraManager cameraManager;
+  private CameraManager cameraManager;
 
   private enum State {
     PREVIEW,
@@ -69,10 +69,15 @@ public final class CaptureActivityHandler extends Handler {
     decodeThread.start();
     state = State.SUCCESS;
 
-    // Start ourselves capturing previews and decoding.
-    this.cameraManager = cameraManager;
-    cameraManager.startPreview();
-    restartPreviewAndDecode();
+    try {
+      // Start ourselves capturing previews and decoding.
+      this.cameraManager = cameraManager;
+      cameraManager.startPreview();
+      restartPreviewAndDecode();
+    } catch (RuntimeException e) {
+      Log.w(TAG, "Unexpected error initializing camera", e);
+      activity.displayFrameworkBugMessage();
+    }
   }
 
   @Override

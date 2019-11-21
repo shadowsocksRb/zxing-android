@@ -24,6 +24,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -38,12 +39,16 @@ import com.google.zxing.client.android.CaptureActivity;
 import com.google.zxing.client.android.Intents;
 import com.google.zxing.client.android.R;
 
+import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
+
 /**
  * The activity for interacting with the scan history.
  */
 public final class HistoryActivity extends ListActivity {
 
   private static final String TAG = HistoryActivity.class.getSimpleName();
+  private static final int WRITE_REQUEST_CODE = 3;
 
   private HistoryManager historyManager;
   private ArrayAdapter<HistoryItem> adapter;
@@ -119,39 +124,20 @@ public final class HistoryActivity extends ListActivity {
   public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_history_send:
-        CharSequence history = historyManager.buildHistory();
-        Parcelable historyFile = HistoryManager.saveHistory(history.toString());
-        if (historyFile == null) {
-          AlertDialog.Builder builder = new AlertDialog.Builder(this);
-          builder.setMessage(R.string.msg_unmount_usb);
-          builder.setPositiveButton(R.string.button_ok, null);
-          builder.show();
-        } else {
-          Intent intent = new Intent(Intent.ACTION_SEND, Uri.parse("mailto:"));
-          intent.addFlags(Intents.FLAG_NEW_DOC);
-          String subject = getResources().getString(R.string.history_email_title);
-          intent.putExtra(Intent.EXTRA_SUBJECT, subject);
-          intent.putExtra(Intent.EXTRA_TEXT, subject);
-          intent.putExtra(Intent.EXTRA_STREAM, historyFile);
-          intent.setType("text/csv");
-          try {
-            startActivity(intent);
-          } catch (ActivityNotFoundException anfe) {
-            Log.w(TAG, anfe.toString());
-          }
-        }
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("text/csv");
+        intent.putExtra(Intent.EXTRA_TITLE, "history-" + System.currentTimeMillis() + ".csv");
+        startActivityForResult(intent, WRITE_REQUEST_CODE);
         break;
       case R.id.menu_history_clear_text:
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.msg_sure);
         builder.setCancelable(true);
-        builder.setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int i2) {
-            historyManager.clearHistory();
-            dialog.dismiss();
-            finish();
-          }
+        builder.setPositiveButton(R.string.button_ok, (dialog, i2) -> {
+          historyManager.clearHistory();
+          dialog.dismiss();
+          finish();
         });
         builder.setNegativeButton(R.string.button_cancel, null);
         builder.show();
@@ -162,4 +148,19 @@ public final class HistoryActivity extends ListActivity {
     return true;
   }
 
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    if (requestCode == WRITE_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
+      Uri uri = data.getData();
+      if (uri == null) return;
+      ParcelFileDescriptor parcelFileDescriptor = null;
+      try {
+        parcelFileDescriptor = getContentResolver().openFileDescriptor(uri, "w");
+      } catch (FileNotFoundException ignored) {
+      }
+      if (parcelFileDescriptor == null) return;
+      FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+      historyManager.saveHistory(fileDescriptor);
+    }
+  }
 }

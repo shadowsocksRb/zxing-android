@@ -38,45 +38,14 @@
       android:paddingBottom="12dip">
 
     <ImageView
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:scaleType="center"
         android:src="@drawable/share_via_barcode"
-        android:paddingRight="24dip"
+        android:paddingEnd="24dip"
+        android:paddingStart="0dip"
         tools:ignore="ContentDescription"/>
-
-    <LinearLayout
-        android:layout_width="0dip"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
-
-      <Button android:id="@+id/share_app_button"
-              style="@style/ShareButton"
-              android:text="@string/button_share_app"/>
-
-      <Button android:id="@+id/share_contact_button"
-              style="@style/ShareButton"
-              android:text="@string/button_share_contact"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="0dip"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
-
-      <Button android:id="@+id/share_bookmark_button"
-              style="@style/ShareButton"
-              android:text="@string/button_share_bookmark"/>
-
-      <Button android:id="@+id/share_clipboard_button"
-              style="@style/ShareButton"
-              android:text="@string/button_share_clipboard"/>
-
-    </LinearLayout>
 
   </LinearLayout>
 
@@ -85,6 +54,8 @@
             android:layout_height="wrap_content"
             android:hint="@string/msg_share_text"
             android:singleLine="true"
-            android:selectAllOnFocus="true"/>
+            android:selectAllOnFocus="true"
+            android:importantForAutofill="no"
+            android:inputType="text" />
 
 </LinearLayout>

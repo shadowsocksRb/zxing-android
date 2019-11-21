@@ -17,7 +17,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
   <item android:id="@+id/menu_history_send"
         android:title="@string/history_send"
-        android:icon="@android:drawable/ic_menu_share"
+        android:icon="@android:drawable/ic_menu_save"
         android:orderInCategory="1"
         android:showAsAction="withText|ifRoom"/>
   <item android:id="@+id/menu_history_clear_text"

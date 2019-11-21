@@ -35,7 +35,8 @@ import android.preference.PreferenceScreen;
  *
  * @see PreferencesActivity
  */
-public final class PreferencesFragment 
+@SuppressWarnings("deprecation")
+public final class PreferencesFragment
     extends PreferenceFragment 
     implements SharedPreferences.OnSharedPreferenceChangeListener {
 

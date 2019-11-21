@@ -42,7 +42,8 @@
               android:layout_gravity="center_vertical"
               android:gravity="center"
               android:textColor="@color/contents_text"
-              android:paddingRight="8dip"
+              android:paddingEnd="8dip"
+              android:paddingStart="0dip"
               android:paddingTop="8dip"
               android:paddingBottom="8dip"
               android:textIsSelectable="true"/>

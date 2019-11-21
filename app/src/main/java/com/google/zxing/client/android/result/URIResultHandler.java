@@ -40,8 +40,7 @@ public final class URIResultHandler extends ResultHandler {
   private static final int[] buttons = {
       R.string.button_open_browser,
       R.string.button_share_by_email,
-      R.string.button_share_by_sms,
-      R.string.button_search_book_contents,
+      R.string.button_share_by_sms
   };
 
   public URIResultHandler(Activity activity, ParsedResult result) {
@@ -79,9 +78,6 @@ public final class URIResultHandler extends ResultHandler {
         break;
       case 2:
         shareBySMS(uri);
-        break;
-      case 3:
-        searchBookContents(uri);
         break;
     }
   }

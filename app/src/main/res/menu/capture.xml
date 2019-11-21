@@ -20,6 +20,12 @@
         android:icon="@android:drawable/ic_menu_share"
         android:orderInCategory="1"
         android:showAsAction="withText|ifRoom"/>
+  <item
+      android:id="@+id/menu_file"
+      android:icon="@android:drawable/ic_menu_gallery"
+      android:orderInCategory="1"
+      android:showAsAction="withText|ifRoom"
+      android:title="@string/menu_share" />
   <item android:id="@+id/menu_history"
         android:title="@string/menu_history"
         android:icon="@android:drawable/ic_menu_recent_history"
@@ -29,10 +35,5 @@
         android:title="@string/menu_settings"
         android:icon="@android:drawable/ic_menu_preferences"
         android:orderInCategory="3"
-        android:showAsAction="withText"/>
-  <item android:id="@+id/menu_help"
-        android:title="@string/menu_help"
-        android:icon="@android:drawable/ic_menu_help"
-        android:orderInCategory="4"
         android:showAsAction="withText"/>
 </menu>

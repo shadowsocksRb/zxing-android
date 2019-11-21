@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
  *
  * @author Sean Owen
  */
-@SuppressWarnings("deprecation") // camera APIs
+// camera APIs
 public final class CameraConfigurationUtils {
 
   private static final String TAG = "CameraConfiguration";

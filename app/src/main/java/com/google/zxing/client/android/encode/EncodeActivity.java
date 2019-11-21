@@ -16,30 +16,31 @@
 
 package com.google.zxing.client.android.encode;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
+import android.util.Log;
 import android.view.Display;
+import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.TextView;
+
 import com.google.zxing.WriterException;
 import com.google.zxing.client.android.Contents;
 import com.google.zxing.client.android.FinishListener;
 import com.google.zxing.client.android.Intents;
 import com.google.zxing.client.android.R;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.regex.Pattern;
@@ -57,6 +58,7 @@ public final class EncodeActivity extends Activity {
   private static final int MAX_BARCODE_FILENAME_LENGTH = 24;
   private static final Pattern NOT_ALPHANUMERIC = Pattern.compile("[^A-Za-z0-9]");
   private static final String USE_VCARD_KEY = "USE_VCARD";
+  private static final int WRITE_REQUEST_CODE = 5;
 
   private QRCodeEncoder qrCodeEncoder;
 
@@ -96,7 +98,7 @@ public final class EncodeActivity extends Activity {
   public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.menu_share:
-        share();
+        save();
         return true;
       case R.id.menu_encode:
         Intent intent = getIntent();
@@ -113,58 +115,13 @@ public final class EncodeActivity extends Activity {
     }
   }
 
-  private void share() {
-    QRCodeEncoder encoder = qrCodeEncoder;
-    if (encoder == null) { // Odd
-      Log.w(TAG, "No existing barcode to send?");
-      return;
+    private void save() {
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("image/png");
+        intent.putExtra(Intent.EXTRA_TITLE, makeBarcodeFileName(qrCodeEncoder.getContents()) + ".png");
+        startActivityForResult(intent, WRITE_REQUEST_CODE);
     }
-
-    String contents = encoder.getContents();
-    if (contents == null) {
-      Log.w(TAG, "No existing barcode to send?");
-      return;
-    }
-
-    Bitmap bitmap;
-    try {
-      bitmap = encoder.encodeAsBitmap();
-    } catch (WriterException we) {
-      Log.w(TAG, we);
-      return;
-    }
-    if (bitmap == null) {
-      return;
-    }
-
-    File bsRoot = new File(Environment.getExternalStorageDirectory(), "BarcodeScanner");
-    File barcodesRoot = new File(bsRoot, "Barcodes");
-    if (!barcodesRoot.exists() && !barcodesRoot.mkdirs()) {
-      Log.w(TAG, "Couldn't make dir " + barcodesRoot);
-      showErrorMessage(R.string.msg_unmount_usb);
-      return;
-    }
-    File barcodeFile = new File(barcodesRoot, makeBarcodeFileName(contents) + ".png");
-    if (!barcodeFile.delete()) {
-      Log.w(TAG, "Could not delete " + barcodeFile);
-      // continue anyway
-    }
-    try (FileOutputStream fos = new FileOutputStream(barcodeFile)) {
-      bitmap.compress(Bitmap.CompressFormat.PNG, 0, fos);
-    } catch (IOException ioe) {
-      Log.w(TAG, "Couldn't access file " + barcodeFile + " due to " + ioe);
-      showErrorMessage(R.string.msg_unmount_usb);
-      return;
-    }
-
-    Intent intent = new Intent(Intent.ACTION_SEND, Uri.parse("mailto:"));
-    intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name) + " - " + encoder.getTitle());
-    intent.putExtra(Intent.EXTRA_TEXT, contents);
-    intent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + barcodeFile.getAbsolutePath()));
-    intent.setType("image/png");
-    intent.addFlags(Intents.FLAG_NEW_DOC);
-    startActivity(Intent.createChooser(intent, null));
-  }
 
   private static CharSequence makeBarcodeFileName(CharSequence contents) {
     String fileName = NOT_ALPHANUMERIC.matcher(contents).replaceAll("_");
@@ -203,10 +160,10 @@ public final class EncodeActivity extends Activity {
         return;
       }
 
-      ImageView view = (ImageView) findViewById(R.id.image_view);
+      ImageView view = findViewById(R.id.image_view);
       view.setImageBitmap(bitmap);
 
-      TextView contents = (TextView) findViewById(R.id.contents_text_view);
+      TextView contents = findViewById(R.id.contents_text_view);
       if (intent.getBooleanExtra(Intents.Encode.SHOW_CONTENTS, true)) {
         contents.setText(qrCodeEncoder.getDisplayContents());
         setTitle(qrCodeEncoder.getTitle());
@@ -227,5 +184,49 @@ public final class EncodeActivity extends Activity {
     builder.setPositiveButton(R.string.button_ok, new FinishListener(this));
     builder.setOnCancelListener(new FinishListener(this));
     builder.show();
+  }
+
+  @Override
+  public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+    QRCodeEncoder encoder = qrCodeEncoder;
+    if (encoder == null) { // Odd
+      Log.w(TAG, "No existing barcode to send?");
+      return;
+    }
+
+    String contents = encoder.getContents();
+    if (contents == null) {
+      Log.w(TAG, "No existing barcode to send?");
+      return;
+    }
+
+    Bitmap bitmap;
+    try {
+      bitmap = encoder.encodeAsBitmap();
+    } catch (WriterException we) {
+      Log.w(TAG, we);
+      return;
+    }
+    if (bitmap == null) {
+      return;
+    }
+
+    if (requestCode == WRITE_REQUEST_CODE && resultCode == Activity.RESULT_OK && resultData != null) {
+      Uri uri = resultData.getData();
+      if (uri == null) return;
+      ParcelFileDescriptor parcelFileDescriptor = null;
+      try {
+        parcelFileDescriptor = getContentResolver().openFileDescriptor(uri, "w");
+      } catch (FileNotFoundException ignored) {
+      }
+      if (parcelFileDescriptor == null) return;
+      FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+      try (FileOutputStream fos = new FileOutputStream(fileDescriptor)) {
+        bitmap.compress(Bitmap.CompressFormat.PNG, 0, fos);
+      } catch (IOException ioe) {
+        Log.w(TAG, "Couldn't access file " + uri + " due to " + ioe);
+        showErrorMessage(R.string.msg_unmount_usb);
+      }
+    }
   }
 }

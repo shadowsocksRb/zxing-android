@@ -88,8 +88,8 @@ public final class ViewfinderView extends View {
     if (frame == null || previewFrame == null) {
       return;
     }
-    int width = canvas.getWidth();
-    int height = canvas.getHeight();
+    int width = getWidth();
+    int height = getHeight();
 
     // Draw the exterior (i.e. outside the framing rect) darkened
     paint.setColor(resultBitmap != null ? resultColor : maskColor);
