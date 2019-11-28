@@ -14,18 +14,19 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             signingConfig signingConfigs.debug
             proguardFiles 'proguard-rules.pro'
         }
     }
 
-    defaultConfig {
-        multiDexEnabled true
-    }
+//    defaultConfig {
+//        multiDexEnabled true
+//    }
 
     compileOptions {
-        coreLibraryDesugaringEnabled true
+//        coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
