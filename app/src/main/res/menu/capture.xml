@@ -25,7 +25,7 @@
       android:icon="@android:drawable/ic_menu_gallery"
       android:orderInCategory="1"
       android:showAsAction="withText|ifRoom"
-      android:title="@string/menu_share" />
+      android:title="@string/menu_file" />
   <item android:id="@+id/menu_history"
         android:title="@string/menu_history"
         android:icon="@android:drawable/ic_menu_recent_history"
