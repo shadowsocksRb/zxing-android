@@ -94,7 +94,7 @@
         android:summary="@string/preferences_bulk_mode_summary"/>
     <CheckBoxPreference
         android:key="preferences_orientation"
-        android:defaultValue="true"
+        android:defaultValue="false"
         android:title="@string/preferences_orientation_title"/>
   </PreferenceCategory>
   <PreferenceCategory android:title="@string/preferences_result_title">
