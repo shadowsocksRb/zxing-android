@@ -25,7 +25,6 @@ import com.google.zxing.common.BitMatrix;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -95,7 +94,7 @@ public class FinderPatternFinder {
     int[] stateCount = new int[5];
     for (int i = iSkip - 1; i < maxI && !done; i += iSkip) {
       // Get a row of black/white values
-      clearCounts(stateCount);
+      doClearCounts(stateCount);
       int currentState = 0;
       for (int j = 0; j < maxJ; j++) {
         if (image.get(j, i)) {
@@ -131,15 +130,15 @@ public class FinderPatternFinder {
                     }
                   }
                 } else {
-                  shiftCounts2(stateCount);
+                  doShiftCounts2(stateCount);
                   currentState = 3;
                   continue;
                 }
                 // Clear state to start looking again
                 currentState = 0;
-                clearCounts(stateCount);
+                doClearCounts(stateCount);
               } else { // No, shift counts back by two
-                shiftCounts2(stateCount);
+                doShiftCounts2(stateCount);
                 currentState = 3;
               }
             } else {
@@ -233,15 +232,25 @@ public class FinderPatternFinder {
   }
 
   private int[] getCrossCheckStateCount() {
-    clearCounts(crossCheckStateCount);
+    doClearCounts(crossCheckStateCount);
     return crossCheckStateCount;
   }
 
+  @Deprecated
   protected final void clearCounts(int[] counts) {
+    doClearCounts(counts);
+  }
+
+  @Deprecated
+  protected final void shiftCounts2(int[] stateCount) {
+    doShiftCounts2(stateCount);
+  }
+
+  protected static void doClearCounts(int[] counts) {
     Arrays.fill(counts, 0);
   }
 
-  protected final void shiftCounts2(int[] stateCount) {
+  protected static void doShiftCounts2(int[] stateCount) {
     stateCount[0] = stateCount[2];
     stateCount[1] = stateCount[3];
     stateCount[2] = stateCount[4];
@@ -612,8 +621,7 @@ public class FinderPatternFinder {
       throw NotFoundException.getNotFoundInstance();
     }
 
-//    possibleCenters.sort(moduleComparator);
-    Collections.sort(possibleCenters, moduleComparator);
+    possibleCenters.sort(moduleComparator);
 
     double distortion = Double.MAX_VALUE;
     double[] squares = new double[3];
