@@ -20,8 +20,8 @@
 
 * OpenJDK 1.8+
 * Android SDK
-  - Android SDK Build-Tools 29.0.2
-  - Android SDK Platform 29
+  - Android SDK Build-Tools 30.0.0
+  - Android SDK Platform 30
   - Android SDK Tools
 
 ```bash

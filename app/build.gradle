@@ -1,15 +1,15 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.2"
+    compileSdkVersion 30
+    buildToolsVersion '30.0.0'
 
     defaultConfig {
-        applicationId "io.github.shadowsocksrb.zxing"
+        applicationId 'io.github.shadowsocksrb.zxing'
         minSdkVersion 19
-        targetSdkVersion 29
-        versionCode 110
-        versionName "4.8"
+        targetSdkVersion 30
+        versionCode 111
+        versionName '4.9'
     }
 
     buildTypes {
@@ -38,5 +38,6 @@ android {
 }
 
 dependencies {
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.9'
     implementation project(':core')
 }
