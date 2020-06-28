@@ -374,26 +374,29 @@ public class IntentIntegrator {
     AlertDialog.Builder downloadDialog = new AlertDialog.Builder(activity);
     downloadDialog.setTitle(title);
     downloadDialog.setMessage(message);
-    downloadDialog.setPositiveButton(buttonYes, (dialogInterface, i) -> {
-      String packageName;
-      if (targetApplications.contains(BS_PACKAGE)) {
-        // Prefer to suggest download of BS if it's anywhere in the list
-        packageName = BS_PACKAGE;
-      } else {
-        // Otherwise, first option:
-        packageName = targetApplications.get(0);
-      }
-      Uri uri = Uri.parse("market://details?id=" + packageName);
-      Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-      try {
-        if (fragment == null) {
-          activity.startActivity(intent);
+    downloadDialog.setPositiveButton(buttonYes, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialogInterface, int i) {
+        String packageName;
+        if (targetApplications.contains(BS_PACKAGE)) {
+          // Prefer to suggest download of BS if it's anywhere in the list
+          packageName = BS_PACKAGE;
         } else {
-          fragment.startActivity(intent);
+          // Otherwise, first option:
+          packageName = targetApplications.get(0);
         }
-      } catch (ActivityNotFoundException anfe) {
-        // Hmm, market is not installed
-        Log.w(TAG, "Google Play is not installed; cannot install " + packageName);
+        Uri uri = Uri.parse("market://details?id=" + packageName);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        try {
+          if (fragment == null) {
+            activity.startActivity(intent);
+          } else {
+            fragment.startActivity(intent);
+          }
+        } catch (ActivityNotFoundException anfe) {
+          // Hmm, market is not installed
+          Log.w(TAG, "Google Play is not installed; cannot install " + packageName);
+        }
       }
     });
     downloadDialog.setNegativeButton(buttonNo, null);
